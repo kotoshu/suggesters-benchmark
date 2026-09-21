@@ -1,0 +1,41 @@
+# Benchmark lanes — engines, datasets, and scoring configuration.
+#
+# Each ENGINE lane is a contender. Each DATASET lane is a labelled
+# typo/correction pair set built by extract_pairs.py (pairs are never
+# redistributed; build them locally from the GitHub Typo Corpus).
+#
+#   python3 benchmark.py --lanes lanes.yaml --lang en --max 2000
+#
+# Add a lane to benchmark a new contender; the harness discovers
+# lanes from this file so results stay comparable across runs.
+
+engines:
+  kotoshu:
+    kind: kotoshu
+    setup: KOTOSHU_BACKEND=ruby        # the Ruby ranking pipeline
+    note: kotoshu gem (SymSpell frequency channel + language-aware ranking)
+  hunspell:
+    kind: hunspell
+    dict_env: HUNSPELL_DICT_DIR        # dir containing <lang>.aff/.dic (e.g. LibreOffice dictionaries)
+    note: ispell -a protocol
+  symspell:
+    kind: symspell
+    freq_note: fed the same frequency table as the kotoshu SymSpell channel
+    note: symspellpy, TOP mode (returns one candidate; top1==top3==top5)
+  languagetool:
+    kind: languagetool
+    api: https://api.languagetoolplus.com/v2/check
+    rate_limit_note: public API — bounded subsample only
+    note: sentence-checker contract; isolated-word queries score 0 by shape
+
+datasets:
+  en:
+    nonword: data/en.suggest-nonword.json
+    realword: data/en.suggest-realword.json
+  de:
+    nonword: data/de.suggest-nonword.json
+    realword: data/de.suggest-realword.json
+
+scoring:
+  match: case-insensitive exact
+  cutoffs: [1, 3, 5]
