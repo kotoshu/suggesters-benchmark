@@ -113,13 +113,33 @@ def score(predictions, pairs):
     return {f"top{k}": round(v / n, 4) for k, v in top.items()} | {"n": n}
 
 
+def load_lanes(path):
+    """Read lanes.yaml — the lane configuration surface. The engine
+    registry is code-side (ENGINES); the file declares which lanes a
+    run enables and carries per-lane notes so results stay comparable
+    across forks."""
+    import yaml
+    return yaml.safe_load(Path(path).read_text()) or {}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--lang", default="en")
     ap.add_argument("--max", type=int, default=2000)
+    ap.add_argument("--lanes", default="lanes.yaml",
+                    help="lane configuration (engines to run)")
+    ap.add_argument("--only", action="append", default=None,
+                    help="run only these engine lanes (repeatable)")
     ap.add_argument("--languagetool", action="store_true",
                     help="add the public-API engine on a bounded subsample")
     args = ap.parse_args()
+
+    lanes = load_lanes(args.lanes)
+    lane_names = set((lanes.get("engines") or {}).keys())
+    enabled = set(args.only) if args.only else None
+    engines = {name: fn for name, fn in ENGINES.items()
+               if (enabled is None or name in enabled)
+               and (not lane_names or name in lane_names)}
 
     report = {"spec": "kotoshu.suggest-benchmark/v1", "language": args.lang,
               "match": "case-insensitive exact", "engines": {}}
@@ -130,7 +150,7 @@ def main():
         all_words[klass] = (pairs, words)
 
     dict_base = {"en": "en_US", "de": "de_DE_frami"}.get(args.lang, args.lang)
-    for name, fn in ENGINES.items():
+    for name, fn in engines.items():
         per_class = {}
         for klass, (pairs, words) in all_words.items():
             if name == "hunspell":
