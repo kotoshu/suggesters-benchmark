@@ -62,6 +62,28 @@ frozen splits, max 2000 nonword + 2000 realword pairs (en), 79/72 (de).
 Reproduce with `--max 2000` and the same frequency lists; numbers will
 match to within corpus-build ordering noise.
 
+## Fleet results (first wave, 2026-09-22)
+
+Six languages. Field lanes: LibreOffice/wooorm Hunspell dictionaries +
+the SAME published frequency lists the gem indexes. Small splits for
+es/fr/pt/ru (labelled; corpus is thin there) — within-noise gaps are
+notated rather than claimed as wins.
+
+| lang | n(nonword) | kotoshu top1/top3/top5 | SymSpell top1 | Hunspell top1 |
+|------|-----------|------------------------|---------------|---------------|
+| en | 2000 | **86.4 / 94.4 / 95.7** | 85.4 | 78.5 |
+| es | 71 | **76.1 / 87.3 / 87.3** | 74.7 | 59.2 |
+| fr | 119 | **68.1 / 84.0 / 84.9** | 65.6 | 61.3 |
+| ru | 304 | 74.0 / **86.8 / 88.2** | 75.0 | 70.7 |
+| pt | 124 | 66.1 / 79.0 / **82.3** | 67.7 | 62.9 |
+| de | 79 | 70.9 / **91.1 / 92.4** | 73.4 | 54.4 |
+
+kotoshu is #1 on nonword top-1 outright in en/es/fr; ru/pt sit within
+split-size noise at top-1 while #1 at top-3/top-5. Real-word:
+kotoshu leads en/de/pt/ru; Hunspell's morphology leads es/fr — the
+context-bound frontier, quantified per language in
+kotoshu/models-fasttext-onnx TODO.compare/8.
+
 ## License
 
 MIT. The GitHub Typo Corpus has its own terms — fetch it separately
