@@ -76,7 +76,7 @@ notated rather than claimed as wins.
 | fr | 119 | **68.1 / 84.0 / 84.9** | 65.6 | 61.3 |
 | ru | 304 | 74.0 / **86.8 / 88.2** | 75.0 | 70.7 |
 | pt | 124 | 66.1 / 79.0 / **82.3** | 67.7 | 62.9 |
-| de | 79 | 70.9 / **91.1 / 92.4** | 73.4 | 54.4 |
+| de | 79 | 70.9 / **91.1 / 92.4** → **72.2 / 89.9 / 91.1** (C9 fold) | 73.4 | 54.4 |
 
 kotoshu is #1 on nonword top-1 outright in en/es/fr; ru/pt sit within
 split-size noise at top-1 while #1 at top-3/top-5. Real-word:
