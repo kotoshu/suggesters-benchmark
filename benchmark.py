@@ -79,6 +79,16 @@ def run_kotoshu(words, lang="en"):
     return [mapping.get(w, []) for w in words]
 
 
+def run_quill(words, lang="en"):
+    """quill (pip install git+https://github.com/KenWuqianghao/quill). English only; other
+    languages get empty lists. Answers valid words too (see the lane note); never returns
+    the input word itself."""
+    if lang != "en":
+        return [[] for _ in words]
+    import quill
+    return [quill.suggest(w, k=5) for w in words]
+
+
 def run_languagetool(words, lang):
     results = []
     for w in words:
@@ -98,7 +108,8 @@ def run_languagetool(words, lang):
     return results
 
 
-ENGINES = {"hunspell": run_hunspell, "symspell": run_symspell, "kotoshu": run_kotoshu}
+ENGINES = {"hunspell": run_hunspell, "symspell": run_symspell, "kotoshu": run_kotoshu,
+           "quill": run_quill}
 
 
 def score(predictions, pairs):
