@@ -27,6 +27,15 @@ engines:
     api: https://api.languagetoolplus.com/v2/check
     rate_limit_note: public API — bounded subsample only
     note: sentence-checker contract; isolated-word queries score 0 by shape
+  quill:
+    kind: quill
+    setup: pip install git+https://github.com/KenWuqianghao/quill   # model file ships in the package (data CC BY-SA 4.0)
+    note: >-
+      pure-Python noisy-channel suggester, CPU-only, no LLM, no network (~1.8k queries/s on one core):
+      WikiText-103 + Stack Overflow unigram prior, edit channel learned from GitHub Typo Corpus pairs
+      disjoint from the frozen splits, ranker fitted by cross-validation on those pairs.
+      Answers VALID words too (never returns the input), so its realword numbers are not comparable
+      with the dictionary-gated lanes; compare them with Hunspell forced to suggest for accepted words.
 
 datasets:
   en:

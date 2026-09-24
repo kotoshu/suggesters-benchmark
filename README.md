@@ -33,7 +33,8 @@ The harness discovers lanes from the file so runs stay comparable.
 Current lanes: **kotoshu** (Ruby ranking pipeline), **hunspell**
 (ispell -a over LibreOffice dictionaries), **symspell** (symspellpy TOP
 mode over the same frequency table kotoshu indexes), **languagetool**
-(public API, bounded subsample).
+(public API, bounded subsample), **quill** (pure-Python noisy-channel
+suggester, English only; answers valid words too, see the lane note).
 
 ## Results (2026-09-21)
 
@@ -50,6 +51,16 @@ frozen splits, max 2000 nonword + 2000 realword pairs (en), 79/72 (de).
 | **kotoshu** | **86.4%** | **94.4%** | **95.7%** | **9.4%** |
 | SymSpell (TOP) | 85.4% | 85.4% | 85.4% | 4.4% |
 | Hunspell | 78.5% | 93.6% | 95.1% | 7.4% |
+| quill ¹ | 95.2% | 98.2% | 98.45% | 47.2% ² |
+
+¹ quill-spell 0.6.0, run on Linux x86_64 (Python 3.11) with this repo's
+`score()` on the same frozen splits (2000 + 2000 pairs).
+
+² Not comparable with the rows above: quill also suggests alternatives
+for valid words, while the other lanes return nothing for a word their
+dictionary accepts, and the realword class consists only of valid
+words. Hunspell forced to suggest for accepted words scores 15.3% /
+41.5% / 50.7% realword top-1 / 3 / 5 on the same pairs.
 
 **German (79 nonword / 72 realword pairs — thin, labelled)**
 
