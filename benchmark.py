@@ -16,8 +16,11 @@ from pathlib import Path
 
 import numpy as np
 
-REPO = Path(__file__).resolve().parents[1]
-DICTS = Path("/tmp/bench-dicts")
+# Data root: parent-of-script (the canonical models-fasttext-onnx
+# checkout layout) by default; override with BENCH_DATA_DIR for a
+# standalone checkout that carries eval/ and models/ under one dir.
+REPO = Path(os.environ.get("BENCH_DATA_DIR", Path(__file__).resolve().parents[1]))
+DICTS = Path(os.environ.get("BENCH_DICTS", "/tmp/bench-dicts"))
 
 
 def load_pairs(lang, klass, max_n):

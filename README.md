@@ -99,3 +99,44 @@ kotoshu/models-fasttext-onnx TODO.compare/8.
 
 MIT. The GitHub Typo Corpus has its own terms — fetch it separately
 and do not redistribute splits.
+
+## Reproducing the frozen splits
+
+The frozen split files (`eval/realword/<lang>.suggest-{nonword,realword}.json`)
+are NOT in this repository — the canonical copies live in the
+[kotoshu/models-fasttext-onnx](https://github.com/kotoshu/models-fasttext-onnx)
+checkout at `eval/realword/` (sha256 at `3dc43a6`: nonword
+`9179cc3d84721b91f345958b1ac6e0b9135c74c618a89573ff1406b10dcc61f5`,
+realword `9272f68c355b4d1f4bb9d73d4c785c13cf4f4eac58e7f7ff05bb8a8a25047c33`).
+They were built by that repo's canonical pipeline
+(`scripts/fetch_corpus.py` + `scripts/extract_suggest_pairs.py`, which
+classify by that repo's fastText model vocabulary).
+
+Two supported setups:
+
+1. **Canonical (byte-exact)** — clone both repos side by side (the
+   `benchmark.py` default layout expects `models-fasttext-onnx` as the
+   script's parent directory's sibling carrying `eval/` and `models/`),
+   or point `BENCH_DATA_DIR` at any directory carrying that layout:
+
+   ```
+   git clone https://github.com/kotoshu/models-fasttext-onnx
+   BENCH_DATA_DIR=/path/to/models-fasttext-onnx python3 benchmark.py --lang en
+   ```
+
+2. **Standalone rebuild (equivalent, not byte-exact)** — fetch the
+   GitHub Typo Corpus v1.0.0 (`.jsonl.gz`) plus a word-per-line
+   vocabulary for the language, then:
+
+   ```
+   python3 extract_pairs.py --corpus typoCorpus.v1.0.0.jsonl.gz \
+       --lang en --vocab en_words.txt --out data/
+   BENCH_DATA_DIR=$(pwd) python3 benchmark.py --lang en
+   ```
+
+`extract_pairs.py` reads the real GTC v1.0.0 schema
+(`row["edits"][i]["src"/"tgt"]["text"]`, `.jsonl.gz`) and classifies
+nonword/realword by your vocabulary; the frozen files' classification
+used the canonical model vocabulary, so expect equivalent-but-not-
+identical splits. Dictionary files for the hunspell lane go to
+`BENCH_DICTS` (default `/tmp/bench-dicts`).
